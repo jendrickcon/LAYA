@@ -3,6 +3,7 @@ package com.laya.desk.ui
 import android.view.MotionEvent
 import com.google.android.filament.View
 import com.laya.desk.game.EscapePhase
+import com.laya.desk.game.GardenState
 import io.github.sceneview.collision.HitResult
 import io.github.sceneview.math.Position
 import io.github.sceneview.node.Node
@@ -17,10 +18,11 @@ internal object ExperienceGeometry {
     const val LEVER = "laya-lever"
     const val STEP_METERS = 0.052f
     const val WEIGHT_Y = 0.0275f
-    const val AVATAR_X = -0.22f
-    const val AVATAR_Y = 0.35f
+    const val AVATAR_X = GardenState.EXIT_TILE * GardenState.STEP_METERS
+    const val AVATAR_Y = 0.352f
     const val AVATAR_Z = 0.055f
     const val PULL_METERS = 0.14f
+    const val PULL_OUT_METERS = 0.085f
 }
 
 /** Owns an entire grabbed pointer sequence, so the orbit camera never sees part of that drag. */
@@ -44,7 +46,7 @@ internal class ExperienceTouchController(private val game: BalanceBridgeGame, pr
             val avatar = touched.ancestor(ExperienceGeometry.AVATAR)
             val weight = touched.ancestor(ExperienceGeometry.WEIGHT)
             val origin = when {
-                avatar != null && game.escape.phase == EscapePhase.TRAPPED -> {
+                avatar != null && game.escape.phase == EscapePhase.EXIT_READY -> {
                     target = Target.AVATAR
                     avatar.ancestor(ExperienceGeometry.BOARD)
                 }

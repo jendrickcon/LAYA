@@ -14,6 +14,7 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
@@ -36,7 +37,8 @@ fun BalanceBridgePanel(
     val state = game.state
     val playable = canPlay && game.puzzleEnabled && game.weightDrag == null
     val scroll = rememberScrollState()
-    LaunchedEffect(game.inputEpoch, game.escape.phase == EscapePhase.PLAYING, state.phase) {
+    LaunchedEffect(game.inputEpoch, game.escape.phase == EscapePhase.SCREEN_PLAY,
+        game.escape.phase == EscapePhase.PLAYING, state.phase) {
         scroll.scrollTo(0)
     }
     Surface(modifier = modifier.fillMaxWidth(), tonalElevation = 4.dp, shape = MaterialTheme.shapes.large) {
@@ -45,7 +47,25 @@ fun BalanceBridgePanel(
             modifier = Modifier.heightIn(min = 260.dp, max = 260.dp).verticalScroll(scroll).padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            if (game.escape.phase != EscapePhase.PLAYING) {
+            if (game.escape.phase == EscapePhase.SCREEN_PLAY) {
+                Text("Sampaguita Garden", style = MaterialTheme.typography.titleMedium)
+                Text("Collect the bud, then reach the flower gate on the right.",
+                    style = MaterialTheme.typography.bodyMedium)
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Button(onClick = { game.gardenStep(-1) }, enabled = canPlay && game.gardenEnabled,
+                        modifier = Modifier.weight(1f)) { Text("Left") }
+                    Button(onClick = { game.gardenStep(1) }, enabled = canPlay && game.gardenEnabled,
+                        modifier = Modifier.weight(1f)) { Text("Right") }
+                    Button(onClick = game::gardenJump, enabled = canPlay && game.gardenEnabled,
+                        modifier = Modifier.weight(1f)) { Text("Jump") }
+                }
+                Text(if (!canPlay) "Find the screen with your camera to continue." else game.garden.hint,
+                    modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+                    style = MaterialTheme.typography.bodySmall)
+                Text(if (game.garden.budCollected) "Bud collected · 1 / 1" else "Bud · 0 / 1",
+                    style = MaterialTheme.typography.labelLarge)
+                TextButton(onClick = game::skipGarden, enabled = canPlay && game.gardenEnabled) { Text("Skip intro") }
+            } else if (game.escape.phase != EscapePhase.PLAYING) {
                 Text(
                     if (game.escape.phase == EscapePhase.ESCAPING) "She's free!" else "Drag her down to set her free.",
                     style = MaterialTheme.typography.titleMedium,
@@ -55,7 +75,7 @@ fun BalanceBridgePanel(
                     game.escape.phase == EscapePhase.ESCAPING -> "She's landing on the starting platform."
                     game.escape.readyToRelease -> "Release now to set her free!"
                     game.escape.phase == EscapePhase.RETURNING -> "Try again — pull her feet down to the marker line."
-                    else -> "Touch the little spirit, pull her feet down to the marker line, then release."
+                    else -> "She can leave her world. Touch the fairy, pull her feet down to the marker, then release."
                 }, modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite })
                 LinearProgressIndicator(
                     progress = {

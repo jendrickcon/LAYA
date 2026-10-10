@@ -2,7 +2,23 @@
 
 Last updated: 2026-10-11
 
-## Implemented (M3 compiled; M2 phone success reported previously)
+## Implemented (M4 compiled; M2 phone success reported previously)
+- Milestone 4 / 0.4.0-m4 (versionCode 5): a short floating garden with left/right steps,
+  a two-tile jump over a branch, one collectible bud, and a flower-gate exit. Pure Kotlin
+  GardenState owns movement and completion; Skip intro offers an accessible route to the exit.
+- Before the exit, the board is hidden and only garden controls are shown. Exit completion
+  unlocks touch extraction and Free her. An early release returns to the exit without losing
+  the bud. One fairy node follows a continuous outward/downward path as the board appears.
+- Original primitive fairy: warm brown skin, dark hair, cream petal skirt, olive bodice,
+  pale leaf wings, flower headpiece, and small movement gestures. Reference media are not shipped.
+- The garden and fairy render through the same scene in preview and AR; existing weight dragging,
+  integer balance rules, accessible distance controls, explanation, placement, and tracking gates
+  remain. Replay resets the entire garden/escape/puzzle sequence at the same placement.
+- M4 assembly passed in 9s; final heading-copy refinement assembled in 2s. APK metadata confirms
+  versionCode 5 / 0.4.0-m4 and unchanged permissions. No emulator, tests, lint, install, or device
+  runtime check was run for M4. The local milestone checkpoint is tagged m4-playable-screen.
+
+### Previous milestones
 - Milestone 3 / 0.3.0-m3 (versionCode 4): original floating frame and spirit above the board,
   touch grab/pull with a visible release threshold, smooth return on early release/cancel,
   one scripted descent to the starting platform, and a Free her button. Puzzle controls unlock
@@ -55,13 +71,13 @@ Last updated: 2026-10-11
   local.properties, and signing files are ignored.
 
 ## Incomplete
-- M3 runtime/device acceptance, final character/art, polish, and the competition package.
+- M4 runtime/device acceptance, final character/art, polish, and the competition package.
   The full competition MVP is not verified.
 - App icon/theme resources still use the Android Studio wizard defaults.
-- Detailed phone acceptance checks remain pending; M3 assembly is the recorded build evidence.
+- Detailed phone acceptance checks remain pending; M4 assembly is the current build evidence.
 
 ## Blockers
-- No build blocker: 0.3.0-m3 assembles successfully. Further testing is deferred by user request.
+- No build blocker: 0.4.0-m4 assembles successfully. Further testing is deferred by user request.
 - The user reports insufficient visual detail / tracking loss on the first phone run at home.
   The user later reports "it is working," without specifying the mode or individual checks.
   The fallback is usable according to that report. The M2 phone build is also user-reported working.
@@ -71,8 +87,12 @@ Last updated: 2026-10-11
 ## Known defects / unknowns
 - SceneView APIs now compile against the published 4.23.0 artifact. Cubes/anchors use the
   composable scope functions, not imported imperative node constructors.
-- M3 object picking, drag feel after orbiting, AR heading, lifecycle/tracking recovery, repeated
+- M4 garden controls, fairy appearance, object picking, breakout continuity, drag feel after orbiting,
+  AR heading, lifecycle/tracking recovery, repeated
   replay/reset, and control-card layout have not been run on the target phone.
+- The garden is bounded shallow 2.5D geometry, not a render-to-texture screen or clipped portal.
+  Side views can reveal the depth. The opaque-wing fairy is a first art pass; no detailed rig or
+  physical screen interaction is claimed. The small board scales into view during descent.
 - Very shallow/edge-on camera angles cannot project a stable drag; the interaction cancels with
   a hint and the accessible controls stay available. Small objects may be easier to grab after zooming.
 - The bridge is a teaching model, with scripted tilt/crossing rather than a physics simulation.
@@ -137,6 +157,14 @@ Last updated: 2026-10-11
 - D20 Board heading is calculated from the camera in anchor-local space only at placement,
   using ARCore Pose inverse/transformPoint. The board and floating screen keep that local heading.
   API reference: https://developers.google.com/ar/reference/java/com/google/ar/core/Pose
+- D21 M4 adds SCREEN_PLAY and EXIT_READY before existing escape phases. One small lane with a
+  blocked tile, fixed-duration hops, a bud, and an exit keeps the feature bounded and offline.
+- D22 Keep the same named fairy under the same board-local parent throughout garden, extraction,
+  landing, and crossing. Reveal the board only during descent; the garden remains anchored above it.
+- D23 Generate the original fairy and garden from lightweight geometry. Opaque pale wings avoid
+  transparency sorting; an unlit backdrop/bud communicates a screen without a second renderer.
+- D24 The user explicitly requested assembly only for M4: skip emulator, automated tests, and lint.
+  Compilation and source inspection establish implementation/build evidence, not runtime acceptance.
 
 ## Repository repair and backups
 - The import originally sat inside app/src/main/java/com/example/laya, leaving the wizard's
@@ -161,12 +189,14 @@ Last updated: 2026-10-11
   Do not claim encryption.
 
 ## Next recommended task
-The implementation in docs/ASTRA-NEXT-TASK.md is delivered as M3. The user handles phone use;
-no more testing is requested for this pass. Use subsequent phone feedback to guide touch/layout
+The implementation in docs/ASTRA-M4-PLAYABLE-SCREEN.md is delivered as M4. The user handles phone use;
+no more testing is requested for this pass. Use subsequent phone feedback to guide garden/reveal/touch/layout
 refinements, then finish presentation polish and the competition package before the isolated
 real-hand-tracking prototype. The full competition MVP is not yet verified.
 
 Local source checkpoints (outside the repository) preserve M2 before editing and Stage A after
 its successful assembly under C:\Users\DOT36\jendrick\PROJECTS\tmp\laya-review\m3-checkpoints.
 The local Git author identity reuses the existing Audiary identity, configured for LAYA only.
-The main branch and m3-touch-interaction tag preserve the current M3 source checkpoint.
+The m3-touch-interaction tag preserves the pushed M3 source checkpoint. The m4-playable-screen
+tag preserves the M4 implementation. Publication is authorized for the m4-playable-screen branch,
+a comparison against main, and a GitHub prerelease containing the debug APK linked from README.

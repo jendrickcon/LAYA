@@ -1,10 +1,10 @@
 package com.laya.desk.game
 
-enum class EscapePhase { TRAPPED, DRAGGING, RETURNING, ESCAPING, PLAYING }
+enum class EscapePhase { SCREEN_PLAY, EXIT_READY, DRAGGING, RETURNING, ESCAPING, PLAYING }
 
 /** Touch escape rules and animation clock, independent of Android and scene coordinates. */
 data class EscapeState(
-    val phase: EscapePhase = EscapePhase.TRAPPED,
+    val phase: EscapePhase = EscapePhase.SCREEN_PLAY,
     val pull: Float = 0f,
     val animationStartPull: Float = 0f,
     val elapsedMillis: Long = 0L,
@@ -15,7 +15,7 @@ data class EscapeState(
         get() = if (phase == EscapePhase.PLAYING) 1f
         else if (phase == EscapePhase.ESCAPING) smooth(elapsedMillis.toFloat() / DESCENT_MILLIS) else 0f
 
-    fun grab(): EscapeState = if (phase == EscapePhase.TRAPPED) copy(phase = EscapePhase.DRAGGING) else this
+    fun grab(): EscapeState = if (phase == EscapePhase.EXIT_READY) copy(phase = EscapePhase.DRAGGING) else this
 
     fun drag(value: Float): EscapeState =
         if (phase == EscapePhase.DRAGGING && value.isFinite()) copy(pull = value.coerceIn(0f, 1f)) else this
@@ -24,12 +24,12 @@ data class EscapeState(
         else if (readyToRelease) free() else cancelDrag()
 
     fun cancelDrag(): EscapeState = if (phase == EscapePhase.DRAGGING) {
-        if (pull == 0f) EscapeState()
+        if (pull == 0f) EscapeState(phase = EscapePhase.EXIT_READY)
         else copy(phase = EscapePhase.RETURNING, animationStartPull = pull, elapsedMillis = 0L)
     } else this
 
     fun free(): EscapeState = when (phase) {
-        EscapePhase.TRAPPED, EscapePhase.DRAGGING, EscapePhase.RETURNING ->
+        EscapePhase.EXIT_READY, EscapePhase.DRAGGING, EscapePhase.RETURNING ->
             copy(phase = EscapePhase.ESCAPING, animationStartPull = pull, elapsedMillis = 0L)
         else -> this
     }
@@ -38,7 +38,7 @@ data class EscapeState(
         if (!isAnimating || deltaMillis <= 0L) return this
         val duration = if (phase == EscapePhase.RETURNING) RETURN_MILLIS else DESCENT_MILLIS
         val elapsed = (elapsedMillis + deltaMillis.coerceAtMost(100L)).coerceAtMost(duration)
-        if (elapsed == duration) return if (phase == EscapePhase.RETURNING) EscapeState()
+        if (elapsed == duration) return if (phase == EscapePhase.RETURNING) EscapeState(phase = EscapePhase.EXIT_READY)
             else copy(phase = EscapePhase.PLAYING, elapsedMillis = elapsed)
         return copy(
             elapsedMillis = elapsed,

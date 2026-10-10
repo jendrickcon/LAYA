@@ -31,6 +31,7 @@ import com.google.ar.core.TrackingState
 import com.google.ar.core.exceptions.NotTrackingException
 import com.google.ar.core.exceptions.ResourceExhaustedException
 import com.laya.desk.game.PlacementPhase
+import com.laya.desk.game.EscapePhase
 import com.laya.desk.game.derivePhase
 import com.laya.desk.game.instructionFor
 import io.github.sceneview.ar.ARSceneView
@@ -83,8 +84,9 @@ fun ArPlacementScreen(onOpenPreview: () -> Unit) {
             "Board tracking paused. Point your camera back at the board."
         placementError != null -> placementError!!
         anchor != null && estimatedPlacement ->
-            "Balance Bridge · Estimated placement may shift as tracking improves."
-        anchor != null -> "Balance Bridge · Help the little spirit cross."
+            "LAYA · Estimated placement may shift as tracking improves."
+        anchor != null -> if (game.escape.phase == EscapePhase.PLAYING)
+            "LAYA · Balance Bridge" else "LAYA · Sampaguita Garden"
         else -> instructionFor(phase)
     }
 
@@ -94,7 +96,7 @@ fun ArPlacementScreen(onOpenPreview: () -> Unit) {
             engine = engine,
             view = view,
             onTouchEvent = touch::onTouch,
-            planeRenderer = true,
+            planeRenderer = anchor == null,
             planeFindingMode = Config.PlaneFindingMode.HORIZONTAL,
             depthMode = Config.DepthMode.DISABLED,
             // Enabled for the session, but used only after the user chooses Quick placement.
