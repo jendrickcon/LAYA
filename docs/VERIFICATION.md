@@ -2,6 +2,45 @@
 
 Rule: only record what was actually run. Leave "not run" until it is.
 
+## Milestone 4 — 2026-10-11
+
+Delivered version: **0.4.0-m4 / versionCode 5**.
+
+| Check | Result |
+|---|---|
+| Garden, continuous reveal, and fairy APK assembly | Passed in 9s; 36 actionable tasks, 12 executed, 24 up-to-date |
+| Final APK assembly after heading-copy refinement | Passed in 2s; 36 actionable tasks, 4 executed, 32 up-to-date |
+| APK metadata/permissions inspection (AAPT2) | com.laya.desk, versionCode 5, 0.4.0-m4; minSdk 24 / targetSdk 36; CAMERA plus AndroidX internal signature permission; no INTERNET or VIBRATE |
+| Emulator, automated tests, lint | Not run, per the user's explicit instruction |
+| Installation / phone interaction / AR behavior | Not run by the agent; previous user-reported phone success applies to M2 |
+
+Only `:app:assembleDebug` was invoked, using the same one-worker, in-process Kotlin command
+documented below for M3. Dependency pins and JVM 17 remain unchanged.
+
+APK: `app/build/outputs/apk/debug/app-debug.apk`.
+Final APK size: 45,658,551 bytes. SHA-256:
+`DEF129F3E53AFB6925823F2BB6CE2A64207DB23A46BA2C5E6089A35A5599989A`.
+
+Implementation/source review coverage (not runtime tests):
+- New pure Kotlin `game/GardenState.kt`: bounded left/right movement, branch jump, bud, exit,
+  animated Skip intro, and capped frame deltas. Normal route: Right x3, Jump, Right x3.
+- `game/EscapeState.kt` and `ui/BalanceBridgeGame.kt`: garden/exit phases, lifecycle/tracking
+  gating, preserved exit progress after early release, and full replay reset.
+- New `ui/GardenScreen.kt` and `ui/SampaguitaFairy.kt`: original generated garden and fairy.
+  `BalanceBridgeScene.kt` keeps one fairy call/parent across all phases, delays board visibility,
+  and moves the character outward before landing. The screen remains under the same anchor.
+- Shared panel, touch controller, preview, and AR hosts updated for exit picking, garden buttons,
+  framing, and staged instructions. Existing weight dragging and balance rules are retained.
+- Matching SceneView 4.23.0 primitive and unlit-material signatures were read from local sources;
+  the code compiles against the pinned artifact. No new dependencies, permissions, or media assets.
+- README, STATUS, and the M4 scope record describe the delivered controls and limitations.
+  Kotlin paths above are relative to `app/src/main/kotlin/com/laya/desk/`.
+
+The screen uses bounded shallow 2.5D geometry, not render-to-texture or portal clipping. Side views
+can reveal its depth; the fairy is a first primitive art pass with opaque wings. No phone appearance,
+touch feel, frame rate, tracking recovery, replay stability, or full-demo acceptance is established
+by compilation. The earlier 20 passing tests belong to M2 and do not verify these changes.
+
 ## Milestone 3 — 2026-10-11
 
 Delivered version: **0.3.0-m3 / versionCode 4**.

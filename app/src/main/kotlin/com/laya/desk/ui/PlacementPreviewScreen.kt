@@ -39,8 +39,8 @@ fun PlacementPreviewScreen(onReturnToAr: () -> Unit) {
     val engine = rememberEngine()
     val view = rememberView(engine)
     val touch = remember(game, view) { ExperienceTouchController(game, view) }
-    val home = remember { Position(0.40f, 0.53f, 0.95f) }
-    val target = remember { Position(0f, 0.20f, 0f) }
+    val home = remember { Position(0.22f, 0.53f, 1.20f) }
+    val target = remember { Position(0f, 0.30f, 0f) }
     val cameraNode = rememberCameraNode(engine) {
         position = home
         lookAt(target)
@@ -52,11 +52,11 @@ fun PlacementPreviewScreen(onReturnToAr: () -> Unit) {
         Column(Modifier.fillMaxSize().safeDrawingPadding()) {
             Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 12.dp),
                 verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text("LAYA · The Desk Breakout", style = MaterialTheme.typography.headlineSmall)
+                Text("LAYA", style = MaterialTheme.typography.headlineSmall)
                 Text("3D preview · No camera", style = MaterialTheme.typography.labelLarge)
                 Text(
-                    if (placed) "Free her, then balance the bridge. Drag empty space to look around; pinch to zoom."
-                    else "Tap the virtual board or use Place board to begin.",
+                    if (placed) "Drag empty space to look around; pinch to zoom."
+                    else "Tap the scene or use Place experience to begin.",
                     style = MaterialTheme.typography.bodyMedium,
                 )
             }
@@ -81,13 +81,13 @@ fun PlacementPreviewScreen(onReturnToAr: () -> Unit) {
                 if (placed) {
                     BalanceBridgeScene(game)
                 } else {
-                    val boardMaterial = remember(materialLoader) {
-                        materialLoader.createColorInstance(Color(0xFFB9A782), roughness = 0.9f)
+                    val screenMaterial = remember(materialLoader) {
+                        materialLoader.createColorInstance(Color(0xFF82B9B5), roughness = 0.9f)
                     }
                     CubeNode(
-                        size = Size(0.68f, 0.02f, 0.36f),
-                        center = Position(0f, 0.01f, 0f),
-                        materialInstance = boardMaterial,
+                        size = Size(0.54f, 0.28f, 0.012f),
+                        center = Position(0f, 0.455f, 0.010f),
+                        materialInstance = screenMaterial,
                     )
                 }
             }
@@ -107,7 +107,7 @@ fun PlacementPreviewScreen(onReturnToAr: () -> Unit) {
                     Button(onClick = {
                         game.reset()
                         placed = true
-                    }, modifier = Modifier.fillMaxWidth()) { Text("Place board") }
+                    }, modifier = Modifier.fillMaxWidth()) { Text("Place experience") }
                 }
                 OutlinedButton(onClick = onReturnToAr, modifier = Modifier.fillMaxWidth()) { Text("Back to AR") }
             }

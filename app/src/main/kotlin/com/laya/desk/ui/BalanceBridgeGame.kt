@@ -15,6 +15,8 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.currentStateAsState
 import com.laya.desk.game.EscapePhase
 import com.laya.desk.game.EscapeState
+import com.laya.desk.game.GardenPhase
+import com.laya.desk.game.GardenState
 import com.laya.desk.game.WeightDragState
 import com.laya.desk.puzzle.BalanceBridgeState
 import com.laya.desk.puzzle.BridgePhase
@@ -25,6 +27,8 @@ class BalanceBridgeGame {
     var state by mutableStateOf(BalanceBridgeState())
         private set
     var escape by mutableStateOf(EscapeState())
+        private set
+    var garden by mutableStateOf(GardenState())
         private set
     var active by mutableStateOf(false)
         private set
@@ -37,7 +41,22 @@ class BalanceBridgeGame {
 
     val puzzleEnabled: Boolean get() = active && escape.phase == EscapePhase.PLAYING
     val canAdjustWeight: Boolean get() = puzzleEnabled && state.phase == BridgePhase.BALANCING
-    val needsAnimation: Boolean get() = escape.isAnimating || state.phase == BridgePhase.CROSSING
+    val gardenEnabled: Boolean get() = active && escape.phase == EscapePhase.SCREEN_PLAY && garden.canMove
+    val needsAnimation: Boolean get() = garden.move != null || escape.isAnimating || state.phase == BridgePhase.CROSSING
+
+    fun gardenStep(direction: Int) { if (gardenEnabled) garden = garden.step(direction) }
+    fun gardenJump() { if (gardenEnabled) garden = garden.jump() }
+    fun skipGarden() {
+        if (gardenEnabled) {
+            garden = garden.skip()
+            enterExitIfReady()
+        }
+    }
+    private fun enterExitIfReady() {
+        if (escape.phase == EscapePhase.SCREEN_PLAY && garden.phase == GardenPhase.EXIT_READY) {
+            escape = EscapeState(phase = EscapePhase.EXIT_READY)
+        }
+    }
 
     fun updateAvailability(value: Boolean) {
         if (active && !value) {
@@ -48,7 +67,7 @@ class BalanceBridgeGame {
     }
 
     fun grabAvatar(): Boolean {
-        if (!active || escape.phase != EscapePhase.TRAPPED) return false
+        if (!active || escape.phase != EscapePhase.EXIT_READY) return false
         escape = escape.grab()
         inputHint = null
         return true
@@ -94,7 +113,10 @@ class BalanceBridgeGame {
     }
     fun advance(elapsedMillis: Long) {
         if (!active) return
-        escape = escape.advance(elapsedMillis)
+        if (escape.phase == EscapePhase.SCREEN_PLAY) {
+            garden = garden.advance(elapsedMillis)
+            enterExitIfReady()
+        } else escape = escape.advance(elapsedMillis)
         if (escape.phase == EscapePhase.PLAYING) state = state.advanceCrossing(elapsedMillis, true)
     }
     fun reset() {
@@ -102,6 +124,7 @@ class BalanceBridgeGame {
         inputHint = null
         weightDrag = null
         escape = EscapeState()
+        garden = GardenState()
         state = BalanceBridgeState()
     }
 }
