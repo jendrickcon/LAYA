@@ -21,6 +21,18 @@ APK: `app/build/outputs/apk/debug/app-debug.apk`.
 Final APK size: 45,658,551 bytes. SHA-256:
 `DEF129F3E53AFB6925823F2BB6CE2A64207DB23A46BA2C5E6089A35A5599989A`.
 
+### APK publication — 2026-10-11
+
+The existing output APK was inspected again for the requested GitHub upload. It had been replaced
+since the assembly record above: 45,555,928 bytes, last modified 02:23:08 local time. No new build,
+emulator, automated tests, or lint was run for publication. AAPT2 confirms the same package,
+versionCode 5 / 0.4.0-m4, CAMERA and the AndroidX internal permission, and no INTERNET or VIBRATE.
+The current source checkout was clean before the README/publication documentation changes.
+
+Published artifact name: `LAYA-0.4.0-m4-debug.apk`, linked from README through the M4 prerelease.
+SHA-256: `5AB93D7C2D2E231613DCDC160C84EB949175E82DD6DC68EBFD51EECC78EED32F`.
+The earlier hash remains the record of the agent's assembled APK. Runtime acceptance is still pending.
+
 Implementation/source review coverage (not runtime tests):
 - New pure Kotlin `game/GardenState.kt`: bounded left/right movement, branch jump, bud, exit,
   animated Skip intro, and capped frame deltas. Normal route: Right x3, Jump, Right x3.

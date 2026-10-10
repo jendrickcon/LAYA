@@ -6,6 +6,14 @@ board appears during her descent, leading into Balance Bridge: weight and distan
 
 Intended entry for the ITSO 2026 Application Development Using Android Programming, Game category.
 
+## Download the APK
+
+[Download LAYA 0.4.0-m4 debug APK](https://github.com/jendrickcon/LAYA/releases/download/m4-playable-screen/LAYA-0.4.0-m4-debug.apk)
+or open the [M4 release page](https://github.com/jendrickcon/LAYA/releases/tag/m4-playable-screen).
+Sign in to a GitHub account with access to this private repository to download it.
+This development prerelease targets Android 7.0+ (API 24), requires an ARCore-supported device
+for distribution, and has not been runtime-verified on the target phone.
+
 ## Status
 Milestone 4 adds a playable garden, a continuous screen-to-board reveal, and an original geometric
 fairy in the shared preview/AR experience. Version **0.4.0-m4 (versionCode 5)** assembles successfully.
