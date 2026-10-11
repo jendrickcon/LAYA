@@ -2,7 +2,49 @@
 
 Last updated: 2026-10-11
 
-## Implemented (M4 compiled; M2 phone success reported previously)
+## M5 orientation patch — 0.5.1-portal-poc
+
+- The user reports working parallax on the Redmi Note 9 Pro. The supplied screenshot shows
+  the initial portal image vertically inverted. This is phone feedback for 0.5.0, not a full
+  acceptance pass; lag investigation is outside this patch at the user's request.
+- Flip only the display plane's texture V coordinate: `v = 1 - v`, once during construction.
+  World positions, camera/frustum math, geometry winding, rendering cadence, and lifecycle remain
+  unchanged. The same correction serves AR and preview; M4 rendering is unaffected.
+- Version **0.5.1-portal-poc / versionCode 7** assembles in **12s**. APK metadata confirms
+  the new version and unchanged permissions. No emulator, automated tests, or lint.
+  Corrected upright orientation and vertical parallax still need phone confirmation.
+- Checkpoint: `m5-portal-orientation`. The original m5-portal-poc tag/asset remain available.
+- [Orientation patch release](https://github.com/jendrickcon/LAYA/releases/tag/m5-portal-orientation)
+  published with LAYA-0.5.1-portal-poc-debug.apk. GitHub's uploaded state, size, and checksum match
+  the build; the direct link returns HTTP 200. README now points to 0.5.1.
+
+## M5 portal PoC baseline
+
+- Branch `portal-rnd` starts at main `aa03206`. Main, M4's tag, and its published APK remain intact.
+  Version **0.5.0-portal-poc / versionCode 6** adds a Portal lab entry; normal M4 remains the default.
+- Matching SceneView 4.23.0, transitive Filament 1.72.1, and ARCore 1.54.0 APIs were inspected.
+  Ranked options and exact evidence are in [PORTAL-RESEARCH.md](PORTAL-RESEARCH.md).
+- A separate small 3D scene renders into a 640 × 400 color/depth target. The floating 30 × 20 cm
+  window samples it; interior objects are not added to the main scene. An off-axis camera uses
+  the viewer in portal-local coordinates, with its near plane at the aperture.
+- Static fairy-shaped marker, near gold post, farther blue arch, distant block, and floor grid.
+  Preview sliders move the viewpoint. AR uses the current phone pose and existing anchor/heading.
+  Regular/Quick placement, reset, camera-free preview, and Return to LAYA are available.
+- Uses the host pre-frame callbacks for one private pass, without a second graphics loop.
+  Tracking loss hides the image; invalid front/angle/distance views show the back/border and hint.
+  Owned resources have explicit teardown, entity-ID release, and deferred texture destruction.
+- First successful assembly: 32s. Final ownership/status refinement: **6s**, 36 tasks,
+  4 executed / 32 up-to-date. AAPT2 confirms code 6, SDK 24/36, CAMERA plus the internal AndroidX
+  receiver permission; no INTERNET or VIBRATE. Dependency pins and JVM 17 remain unchanged.
+- No emulator, automated tests, lint, preview observation, installation, or device run.
+  Portal appearance, correct on-device parallax, reset/recovery, and performance remain pending.
+  This establishes source/API and APK evidence only. Local checkpoint: `m5-portal-poc`.
+- Publication: portal-rnd and m5-portal-poc pushed. The [M5 prerelease](https://github.com/jendrickcon/LAYA/releases/tag/m5-portal-poc)
+  contains LAYA-0.5.0-portal-poc-debug.apk. GitHub reports uploaded state, 45,597,726 bytes, and a
+  SHA-256 matching the assembled APK. README links to M5 and retains M4; no rebuild/runtime checks
+  were performed for this documentation/publication step. GitHub currently reports the repo as public.
+
+## Preserved M4 implementation
 - Milestone 4 / 0.4.0-m4 (versionCode 5): a short floating garden with left/right steps,
   a two-tile jump over a branch, one collectible bud, and a flower-gate exit. Pure Kotlin
   GardenState owns movement and completion; Skip intro offers an accessible route to the exit.
@@ -71,13 +113,15 @@ Last updated: 2026-10-11
   local.properties, and signing files are ignored.
 
 ## Incomplete
+- M5 phone acceptance: texture orientation/clearing, depth/parallax, containment, tracking/lifecycle
+  recovery, repeated resets, and sustained performance. No FPS or memory measurements.
 - M4 runtime/device acceptance, final character/art, polish, and the competition package.
   The full competition MVP is not verified.
 - App icon/theme resources still use the Android Studio wizard defaults.
-- Detailed phone acceptance checks remain pending; M4 assembly is the current build evidence.
+- Detailed phone acceptance checks remain pending; M5 assembly is the current branch's build evidence.
 
 ## Blockers
-- No build blocker: 0.4.0-m4 assembles successfully. Further testing is deferred by user request.
+- No build blocker: 0.5.0-portal-poc assembles successfully. Further testing is deferred by user request.
 - The user reports insufficient visual detail / tracking loss on the first phone run at home.
   The user later reports "it is working," without specifying the mode or individual checks.
   The fallback is usable according to that report. The M2 phone build is also user-reported working.
@@ -85,8 +129,11 @@ Last updated: 2026-10-11
 - No device was connected to ADB during the fallback change.
 
 ## Known defects / unknowns
-- SceneView APIs now compile against the published 4.23.0 artifact. Cubes/anchors use the
-  composable scope functions, not imported imperative node constructors.
+- SceneView APIs compile against the published 4.23.0 artifact. M4 uses composable geometry/anchors;
+  the M5 private world owns imperative geometry nodes inside a standard composable Node parent.
+- The portal is front-view-only and static. No third-person play, new breakout, hand tracking,
+  room occlusion, recursion, or physical collision was added. Native GPU support is not proven
+  by Kotlin compilation or Java exception handling.
 - M4 garden controls, fairy appearance, object picking, breakout continuity, drag feel after orbiting,
   AR heading, lifecycle/tracking recovery, repeated
   replay/reset, and control-card layout have not been run on the target phone.
@@ -165,6 +212,14 @@ Last updated: 2026-10-11
   transparency sorting; an unlit backdrop/bud communicates a screen without a second renderer.
 - D24 The user explicitly requested assembly only for M4: skip emulator, automated tests, and lint.
   Compilation and source inspection establish implementation/build evidence, not runtime acceptance.
+- D25 Keep M5 isolated on portal-rnd and behind Portal lab; preserve main and normal M4 gameplay.
+- D26 Use Filament's renderStandaloneView before the host beginFrame, with the same engine/renderer.
+  Reuse SceneView's packaged image material; no custom shader compiler or new dependency.
+- D27 Use the aperture-aligned asymmetric frustum and a private world to establish containment and
+  depth-dependent parallax. Fixed-camera textures do not meet the criterion; stencil/masking is
+  more integration work in this pin. See PORTAL-RESEARCH.md for evidence and limits.
+- D28 Retain user-requested assembly-only verification for M5. Front-view guards and explicit
+  resource ownership are implemented, but phone appearance/performance/lifecycle checks remain open.
 
 ## Repository repair and backups
 - The import originally sat inside app/src/main/java/com/example/laya, leaving the wizard's
@@ -189,10 +244,11 @@ Last updated: 2026-10-11
   Do not claim encryption.
 
 ## Next recommended task
-The implementation in docs/ASTRA-M4-PLAYABLE-SCREEN.md is delivered as M4. The user handles phone use;
-no more testing is requested for this pass. Use subsequent phone feedback to guide garden/reveal/touch/layout
-refinements, then finish presentation polish and the competition package before the isolated
-real-hand-tracking prototype. The full competition MVP is not yet verified.
+The implementation in docs/ASTRA-M5-PORTAL-POC.md is delivered as an assembled experiment.
+The user handles the short portal phone checklist in VERIFICATION.md. Fix any blank/flipped output,
+containment, parallax, or recovery problem before expanding play. Once the portal illusion is
+confirmed, add a small third-person garden inside it; leave the hand/palm experiment for later.
+M4 remains the playable fallback. The full competition MVP is not yet verified.
 
 Local source checkpoints (outside the repository) preserve M2 before editing and Stage A after
 its successful assembly under C:\Users\DOT36\jendrick\PROJECTS\tmp\laya-review\m3-checkpoints.

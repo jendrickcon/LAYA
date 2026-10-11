@@ -39,7 +39,11 @@ private fun hasCamera(context: Context) =
 
 /** Explains why the camera is needed, requests it, and handles denial. Shows [content] once granted. */
 @Composable
-fun CameraPermissionGate(onOpenPreview: () -> Unit, content: @Composable () -> Unit) {
+fun CameraPermissionGate(
+    onOpenPreview: () -> Unit,
+    onOpenPortal: (() -> Unit)? = null,
+    content: @Composable () -> Unit,
+) {
     val context = LocalContext.current
     var granted by remember { mutableStateOf(hasCamera(context)) }
     var denied by remember { mutableStateOf(false) }
@@ -94,5 +98,8 @@ fun CameraPermissionGate(onOpenPreview: () -> Unit, content: @Composable () -> U
             }) { Text("Open settings") }
         }
         OutlinedButton(onClick = onOpenPreview) { Text("3D preview (no camera)") }
+        onOpenPortal?.let { open ->
+            OutlinedButton(onClick = open) { Text("Portal lab (experimental)") }
+        }
     }
 }

@@ -37,7 +37,11 @@ import com.laya.desk.game.instructionFor
 import io.github.sceneview.ar.ARSceneView
 import io.github.sceneview.rememberARView
 import io.github.sceneview.rememberEngine
+import io.github.sceneview.rememberRenderer
 import io.github.sceneview.rememberOnGestureListener
+import io.github.sceneview.math.Position
+import com.laya.desk.portal.PortalContent
+import com.laya.desk.portal.PortalController
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.math.atan2
 
@@ -53,7 +57,11 @@ private fun hintFor(reason: TrackingFailureReason?): String? = when (reason) {
 
 /** Surface placement plus an explicitly selected approximate AR fallback. */
 @Composable
-fun ArPlacementScreen(onOpenPreview: () -> Unit) {
+fun ArPlacementScreen(
+    onOpenPreview: () -> Unit,
+    portalLab: Boolean = false,
+    onTogglePortal: () -> Unit = {},
+) {
     var anchor by remember { mutableStateOf<Anchor?>(null) }
     var boardFacingDegrees by remember { mutableStateOf(0f) }
     var cameraTracking by remember { mutableStateOf(false) }
@@ -70,6 +78,8 @@ fun ArPlacementScreen(onOpenPreview: () -> Unit) {
     val game = rememberBalanceBridgeGame(canPlay)
     val engine = rememberEngine()
     val view = rememberARView(engine)
+    val renderer = rememberRenderer(engine)
+    val portal = remember { PortalController() }
     val touch = remember(game, view) { ExperienceTouchController(game, view) }
 
     // SceneView's AnchorNode owns the anchor and detaches it when the node is removed.
@@ -85,9 +95,12 @@ fun ArPlacementScreen(onOpenPreview: () -> Unit) {
         placementError != null -> placementError!!
         anchor != null && estimatedPlacement ->
             "LAYA · Estimated placement may shift as tracking improves."
+        anchor != null && portalLab -> "Portal lab · Experimental"
         anchor != null -> if (game.escape.phase == EscapePhase.PLAYING)
             "LAYA · Balance Bridge" else "LAYA · Sampaguita Garden"
-        else -> instructionFor(phase)
+        else -> if (portalLab && phase == PlacementPhase.READY_TO_PLACE)
+            "Surface found. Tap to place the floating window."
+        else instructionFor(phase)
     }
 
     Box(Modifier.fillMaxSize()) {
@@ -95,7 +108,8 @@ fun ArPlacementScreen(onOpenPreview: () -> Unit) {
             modifier = Modifier.fillMaxSize(),
             engine = engine,
             view = view,
-            onTouchEvent = touch::onTouch,
+            renderer = renderer,
+            onTouchEvent = if (portalLab) null else touch::onTouch,
             planeRenderer = anchor == null,
             planeFindingMode = Config.PlaneFindingMode.HORIZONTAL,
             depthMode = Config.DepthMode.DISABLED,
@@ -110,6 +124,7 @@ fun ArPlacementScreen(onOpenPreview: () -> Unit) {
                 cameraTracking = false
                 anchorTracking = null
                 pendingTap.set(null)
+                if (portalLab) portal.render(Position(0f), tracking = false)
             },
             onTrackingFailureChanged = { failureReason = it },
             onGestureListener = rememberOnGestureListener(
@@ -166,10 +181,18 @@ fun ArPlacementScreen(onOpenPreview: () -> Unit) {
                         placementError = "AR resources are full. Use 3D preview, or reopen the app."
                     }
                 }
+                if (portalLab && anchor != null) {
+                    val eye = frame.camera.pose.translation
+                    portal.render(Position(eye[0], eye[1], eye[2]),
+                        cameraTracking && anchorTracking == TrackingState.TRACKING)
+                }
             },
         ) {
             anchor?.let { a ->
-                AnchorNode(anchor = a) { BalanceBridgeScene(game, boardFacingDegrees) }
+                AnchorNode(anchor = a) {
+                    if (portalLab) PortalContent(portal, renderer, boardFacingDegrees)
+                    else BalanceBridgeScene(game, boardFacingDegrees)
+                }
             }
         }
 
@@ -185,7 +208,16 @@ fun ArPlacementScreen(onOpenPreview: () -> Unit) {
             modifier = Modifier.align(Alignment.BottomCenter).fillMaxWidth().safeDrawingPadding().padding(12.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            if (anchor != null) BalanceBridgePanel(game, canPlay)
+            if (anchor != null) {
+                if (portalLab) {
+                    Surface(tonalElevation = 6.dp, shape = MaterialTheme.shapes.medium) {
+                        Column(Modifier.fillMaxWidth().padding(12.dp)) {
+                            Text(portal.status.message, style = MaterialTheme.typography.bodyMedium)
+                            portal.error?.let { Text(it.take(160), style = MaterialTheme.typography.bodySmall) }
+                        }
+                    }
+                } else BalanceBridgePanel(game, canPlay)
+            }
             Surface(tonalElevation = 6.dp, shape = MaterialTheme.shapes.large) {
                 if (anchor != null) {
                     Row(Modifier.fillMaxWidth().padding(4.dp), horizontalArrangement = Arrangement.SpaceEvenly) {
@@ -209,6 +241,9 @@ fun ArPlacementScreen(onOpenPreview: () -> Unit) {
                         FilledTonalButton(onClick = onOpenPreview) { Text("3D preview (no camera)") }
                     }
                 }
+            }
+            FilledTonalButton(onClick = onTogglePortal, modifier = Modifier.fillMaxWidth()) {
+                Text(if (portalLab) "Return to LAYA" else "Portal lab (experimental)")
             }
         }
     }

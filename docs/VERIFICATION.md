@@ -2,6 +2,104 @@
 
 Rule: only record what was actually run. Leave "not run" until it is.
 
+## M5 orientation patch — 2026-10-11
+
+Version **0.5.1-portal-poc / versionCode 7**, on portal-rnd; checkpoint `m5-portal-orientation`.
+
+- Phone evidence for the initial 0.5.0 build: the user reports that parallax works. The supplied
+  Screenshot_2026-10-11-12-56-20-275_com.laya.desk.jpg shows the interior vertically inverted.
+  The agent inspected the screenshot and source; no independent device run or video analysis.
+- Fix: replace each display-plane UV (u, v) with (u, 1 - v) once during resource creation.
+  Uses the verified SceneView 4.23.0 GeometryNode.updateGeometry(vertices) API. No camera,
+  projection, world placement, rendering cadence, dependency, permission, or M4 gameplay changes.
+- `:app:assembleDebug` passed in **12s**; 36 tasks, 10 executed / 26 up-to-date.
+  AAPT2 confirms com.laya.desk, code 7 / 0.5.1-portal-poc, minSdk 24 / targetSdk 36,
+  CAMERA and AndroidX internal receiver permission; no INTERNET or VIBRATE.
+- Emulator, automated tests, and lint skipped per the user's continuing instruction.
+  No performance diagnosis was attempted. The user's explanation of lag was not independently measured.
+
+APK: `app/build/outputs/apk/debug/app-debug.apk`, **45,580,246 bytes**.
+SHA-256: `15219E57CCC20AAFF75BFDDF746EEDB79705D86A5D4391B57E65F19A90A27699`.
+Named delivery copy: `C:\Users\DOT36\Downloads\LAYA-0.5.1-portal-poc-debug.apk`.
+
+[Published orientation patch](https://github.com/jendrickcon/LAYA/releases/tag/m5-portal-orientation);
+[0.5.1 APK](https://github.com/jendrickcon/LAYA/releases/download/m5-portal-orientation/LAYA-0.5.1-portal-poc-debug.apk).
+GitHub reports the new asset as uploaded, 45,580,246 bytes, with SHA-256 matching the build above.
+An unauthenticated download HEAD request returned HTTP 200 with the matching Content-Length.
+README uses the returned download URL. The initial M5 release/tag and M4 artifacts remain intact.
+
+Phone recheck: floor below sky, fairy upright; move sideways and above/below in preview and AR.
+Parallax should remain depth-dependent in both axes. Reset once and return to M4.
+Corrected orientation and broader recovery/performance acceptance remain pending.
+
+## Milestone 5 portal experiment — 2026-10-11
+
+Delivered on `portal-rnd`: **0.5.0-portal-poc / versionCode 6**.
+Base main checkpoint: `aa03206`. Local checkpoint: `m5-portal-poc`.
+
+| Check | Result |
+|---|---|
+| Matching rendering API/source inspection | SceneView 4.23.0, Filament 1.72.1, ARCore 1.54.0; see PORTAL-RESEARCH.md |
+| Initial assembly | Failed on View's inaccessible Kotlin shadowing getter and a placement enum name; fixed with public setShadowingEnabled and READY_TO_PLACE |
+| Portal APK assembly | Passed in 32s, 36 tasks, 12 executed / 24 up-to-date |
+| Final assembly after entity ownership/status refinement | Passed in 6s, 36 tasks, 4 executed / 32 up-to-date |
+| AAPT2 APK inspection | com.laya.desk, code 6 / 0.5.0-portal-poc, minSdk 24 / targetSdk 36; CAMERA and internal AndroidX receiver permission; no INTERNET or VIBRATE |
+| Emulator, automated tests, lint | Not run, explicitly skipped at the user's request |
+| Preview observation / installation / phone run | Not performed |
+| Parallax / containment / orientation / frame rate / lifecycle acceptance | Pending phone verification |
+
+Only the `:app:assembleDebug` Gradle task was invoked, with the one-worker/in-process Kotlin
+command documented in README. No dependency changes, JVM target change, or new permissions.
+The prior M2 automated results and supplied M4 screenshots do not verify M5.
+
+APK: `app/build/outputs/apk/debug/app-debug.apk`.
+Final APK size: **45,597,726 bytes**. SHA-256:
+`0E835570CE04D6A95E1F4E7BA3F3E3B1EDBF48656F8811D36916492861BA9405`.
+The identical M5 APK is now published through the prerelease recorded below.
+An identical, hash-checked delivery copy is saved at
+`C:\Users\DOT36\Downloads\LAYA-0.5.0-portal-poc-debug.apk`.
+
+### M5 publication — 2026-10-11
+
+The existing assembled APK was uploaded without a rebuild or new runtime checks.
+The portal-rnd branch and m5-portal-poc tag were pushed; main and the M4 release were not modified.
+GitHub's release API confirms the asset is `uploaded`, size 45,597,726 bytes, with digest
+`sha256:0e835570ce04d6a95e1f4e7ba3f3e3b1edbf48656f8811d36916492861ba9405`.
+Both size and checksum match the local artifact.
+
+[M5 prerelease](https://github.com/jendrickcon/LAYA/releases/tag/m5-portal-poc);
+[APK download](https://github.com/jendrickcon/LAYA/releases/download/m5-portal-poc/LAYA-0.5.0-portal-poc-debug.apk).
+The returned browser_download_url matches README's M5 link.
+An unauthenticated HEAD request to that download URL returned HTTP 200 with Content-Length 45,597,726.
+GitHub currently reports the repository as public; the prior private-access README instruction
+was removed. The M4 baseline remains linked. PR title/description were prepared before creation.
+
+Source review covered private scene isolation, fresh portal-local eye conversion, aperture-aligned
+projection, front/distance/angle guards, pre-beginFrame submission, no competing graphics loop,
+tracking gating, composition disposal, partial-construction ownership, explicit entity cleanup,
+and deferred textures. M4 game/puzzle/scene/input source files remain unchanged; the hosts add
+conditional lab content and navigation. These are source observations, not runtime results.
+
+### Short manual phone checklist — all pending
+
+1. **Preview:** 3D preview → Portal lab → Place portal. Floor below sky; gold post left,
+   blue arch farther right, small fairy. Move both viewpoint sliders; look for different
+   near/far parallax and changing overlap, with everything contained inside the window.
+2. **AR:** Back to AR → place using a detected book/floor/surface or labeled approximate Quick
+   placement. Keep the full aperture visible around 40–80 cm from its front.
+3. **Perspective:** physically translate the phone left/right 10–20 cm and modestly up/down.
+   The screen stays anchored; interior perspective/overlap changes with depth. Do not judge
+   positional parallax from camera rotation alone. No interior geometry may leak outside.
+4. **Recovery:** approach the back/edge/close limit and return, lose/restore tracking, background/
+   resume, then reset/re-place several times. Check for stale/black images, crashes, and growing
+   stutter. Report subjective smoothness separately from measured fps.
+5. **M4 fallback:** Return to LAYA; check garden controls, touch escape, and Balance Bridge in
+   preview and AR. Mode switches intentionally reset placement/progress.
+
+The experiment has no new gameplay or hand interaction. Runtime UV/clear/depth behavior, driver
+compatibility, and sustained memory/thermal performance remain unknown. API support plus successful
+assembly is the current verdict. See [PORTAL-RESEARCH.md](PORTAL-RESEARCH.md) for ranked approaches.
+
 ## Milestone 4 — 2026-10-11
 
 Delivered version: **0.4.0-m4 / versionCode 5**.
