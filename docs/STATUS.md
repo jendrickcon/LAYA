@@ -23,6 +23,10 @@ Last updated: 2026-10-11
 - No emulator, automated tests, lint, preview observation, installation, or device run.
   Portal appearance, correct on-device parallax, reset/recovery, and performance remain pending.
   This establishes source/API and APK evidence only. Local checkpoint: `m5-portal-poc`.
+- Publication: portal-rnd and m5-portal-poc pushed. The [M5 prerelease](https://github.com/jendrickcon/LAYA/releases/tag/m5-portal-poc)
+  contains LAYA-0.5.0-portal-poc-debug.apk. GitHub reports uploaded state, 45,597,726 bytes, and a
+  SHA-256 matching the assembled APK. README links to M5 and retains M4; no rebuild/runtime checks
+  were performed for this documentation/publication step. GitHub currently reports the repo as public.
 
 ## Preserved M4 implementation
 - Milestone 4 / 0.4.0-m4 (versionCode 5): a short floating garden with left/right steps,

@@ -25,9 +25,24 @@ The prior M2 automated results and supplied M4 screenshots do not verify M5.
 APK: `app/build/outputs/apk/debug/app-debug.apk`.
 Final APK size: **45,597,726 bytes**. SHA-256:
 `0E835570CE04D6A95E1F4E7BA3F3E3B1EDBF48656F8811D36916492861BA9405`.
-This M5 APK is local; it has not been uploaded to a GitHub release.
+The identical M5 APK is now published through the prerelease recorded below.
 An identical, hash-checked delivery copy is saved at
 `C:\Users\DOT36\Downloads\LAYA-0.5.0-portal-poc-debug.apk`.
+
+### M5 publication — 2026-10-11
+
+The existing assembled APK was uploaded without a rebuild or new runtime checks.
+The portal-rnd branch and m5-portal-poc tag were pushed; main and the M4 release were not modified.
+GitHub's release API confirms the asset is `uploaded`, size 45,597,726 bytes, with digest
+`sha256:0e835570ce04d6a95e1f4e7ba3f3e3b1edbf48656f8811d36916492861ba9405`.
+Both size and checksum match the local artifact.
+
+[M5 prerelease](https://github.com/jendrickcon/LAYA/releases/tag/m5-portal-poc);
+[APK download](https://github.com/jendrickcon/LAYA/releases/download/m5-portal-poc/LAYA-0.5.0-portal-poc-debug.apk).
+The returned browser_download_url matches README's M5 link.
+An unauthenticated HEAD request to that download URL returned HTTP 200 with Content-Length 45,597,726.
+GitHub currently reports the repository as public; the prior private-access README instruction
+was removed. The M4 baseline remains linked. PR title/description were prepared before creation.
 
 Source review covered private scene isolation, fresh portal-local eye conversion, aperture-aligned
 projection, front/distance/angle guards, pre-beginFrame submission, no competing graphics loop,
