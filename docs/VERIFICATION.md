@@ -22,6 +22,12 @@ APK: `app/build/outputs/apk/debug/app-debug.apk`, **45,580,246 bytes**.
 SHA-256: `15219E57CCC20AAFF75BFDDF746EEDB79705D86A5D4391B57E65F19A90A27699`.
 Named delivery copy: `C:\Users\DOT36\Downloads\LAYA-0.5.1-portal-poc-debug.apk`.
 
+[Published orientation patch](https://github.com/jendrickcon/LAYA/releases/tag/m5-portal-orientation);
+[0.5.1 APK](https://github.com/jendrickcon/LAYA/releases/download/m5-portal-orientation/LAYA-0.5.1-portal-poc-debug.apk).
+GitHub reports the new asset as uploaded, 45,580,246 bytes, with SHA-256 matching the build above.
+An unauthenticated download HEAD request returned HTTP 200 with the matching Content-Length.
+README uses the returned download URL. The initial M5 release/tag and M4 artifacts remain intact.
+
 Phone recheck: floor below sky, fairy upright; move sideways and above/below in preview and AR.
 Parallax should remain depth-dependent in both axes. Reset once and return to M4.
 Corrected orientation and broader recovery/performance acceptance remain pending.

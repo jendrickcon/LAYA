@@ -8,21 +8,21 @@ Intended entry for the ITSO 2026 Application Development Using Android Programmi
 
 ## Download the APK
 
-[Download LAYA 0.5.0-portal-poc](https://github.com/jendrickcon/LAYA/releases/download/m5-portal-poc/LAYA-0.5.0-portal-poc-debug.apk),
-or open the [M5 prerelease page](https://github.com/jendrickcon/LAYA/releases/tag/m5-portal-poc)
+[Download LAYA 0.5.1-portal-poc](https://github.com/jendrickcon/LAYA/releases/download/m5-portal-orientation/LAYA-0.5.1-portal-poc-debug.apk),
+or open the [M5 orientation patch prerelease](https://github.com/jendrickcon/LAYA/releases/tag/m5-portal-orientation)
 and select the APK under **Assets**. This build includes the experimental Portal lab and the normal M4 game.
 This development prerelease targets Android 7.0+ (API 24), requires an ARCore-supported device
 for distribution, and has not been runtime-verified on the target phone.
 
-The uploaded `LAYA-0.5.0-portal-poc-debug.apk` is **45,597,726 bytes**. GitHub's asset checksum matches
-SHA-256: `0E835570CE04D6A95E1F4E7BA3F3E3B1EDBF48656F8811D36916492861BA9405`.
+The uploaded `LAYA-0.5.1-portal-poc-debug.apk` is **45,580,246 bytes**. GitHub's asset checksum matches
+SHA-256: `15219E57CCC20AAFF75BFDDF746EEDB79705D86A5D4391B57E65F19A90A27699`.
 
 Previous baseline: [M4 release](https://github.com/jendrickcon/LAYA/releases/tag/m4-playable-screen)
 or [LAYA 0.4.0-m4 APK](https://github.com/jendrickcon/LAYA/releases/download/m4-playable-screen/LAYA-0.4.0-m4-debug.apk).
 GitHub currently reports this repository as public.
 
 ## Status
-This experimental branch, **portal-rnd**, adds **M5 / 0.5.0-portal-poc (versionCode 6)**.
+This experimental branch, **portal-rnd**, adds **M5 / 0.5.1-portal-poc (versionCode 7)**.
 The debug APK builds successfully. M4's garden, touch escape, and Balance Bridge remain the default
 experience; a separate **Portal lab (experimental)** entry opens the new rendering study.
 The M5 APK is published through the prerelease linked above; the M4 baseline remains available.
@@ -30,7 +30,9 @@ Building locally generates `app/build/outputs/apk/debug/app-debug.apk`.
 
 M5 implements a contained 3D world rendered into a floating window, with an asymmetric camera
 projection driven by viewer position. It has a static fairy, near/far markers, and preview viewpoint
-sliders. It has **not been observed in preview or AR on the phone**. Emulator, automated tests,
+sliders. The user reports working AR parallax in 0.5.0; its image was upside down.
+Version 0.5.1 flips the display's vertical texture coordinate while retaining the projection.
+The corrected upright appearance still needs a phone recheck. Emulator, automated tests,
 and lint were skipped as requested. See [portal findings](docs/PORTAL-RESEARCH.md),
 [status](docs/STATUS.md), and [verification / phone checklist](docs/VERIFICATION.md).
 
@@ -51,7 +53,8 @@ Camera-based hand tracking stays later; current M4 dragging uses a finger touchi
 
 The portal is a front-facing rendering prototype with a static world. It does not yet add gameplay,
 hand interaction, or a new breakout. Back/very close/steep views hide the interior and show a hint.
-Frame rate, target orientation, lifecycle recovery, and the AR illusion need phone verification.
+Recheck upright orientation and vertical parallax in this patch. Frame rate and lifecycle recovery
+remain unverified; initial parallax is user-reported working.
 
 ## Play the garden, breakout, and Balance Bridge
 1. Choose **3D preview (no camera)**, then **Place experience** (or tap the scene).
@@ -102,7 +105,7 @@ $env:JAVA_HOME = 'C:\Users\DOT36\jendrick\Android Studio\jbr'
 The verified build used Android Studio's JBR 25 and installed Android SDK Platform 36.
 The generated debug APK is `app/build/outputs/apk/debug/app-debug.apk`.
 Repository: [jendrickcon/LAYA](https://github.com/jendrickcon/LAYA); M5 work is isolated on
-`portal-rnd`, with `main` preserved. The M5 source checkpoint is `m5-portal-poc`; previous checkpoints
+`portal-rnd`, with `main` preserved. M5 checkpoints are `m5-portal-poc` and `m5-portal-orientation`; previous checkpoints
 are `m3-touch-interaction` and `m4-playable-screen`. APKs, build caches,
 local SDK paths, and signing files are excluded from Git.
 

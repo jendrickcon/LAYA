@@ -14,6 +14,9 @@ Last updated: 2026-10-11
   the new version and unchanged permissions. No emulator, automated tests, or lint.
   Corrected upright orientation and vertical parallax still need phone confirmation.
 - Checkpoint: `m5-portal-orientation`. The original m5-portal-poc tag/asset remain available.
+- [Orientation patch release](https://github.com/jendrickcon/LAYA/releases/tag/m5-portal-orientation)
+  published with LAYA-0.5.1-portal-poc-debug.apk. GitHub's uploaded state, size, and checksum match
+  the build; the direct link returns HTTP 200. README now points to 0.5.1.
 
 ## M5 portal PoC baseline
 
