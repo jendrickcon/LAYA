@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -20,11 +21,18 @@ class MainActivity : ComponentActivity() {
         setContent {
             MaterialTheme {
                 var preview by rememberSaveable { mutableStateOf(false) }
-                if (preview) {
-                    PlacementPreviewScreen(onReturnToAr = { preview = false })
-                } else {
-                    CameraPermissionGate(onOpenPreview = { preview = true }) {
-                        ArPlacementScreen(onOpenPreview = { preview = true })
+                var portalLab by rememberSaveable { mutableStateOf(false) }
+                // Changing experiment disposes its entire host/anchor/resources before normal play.
+                key(portalLab) {
+                    if (preview) {
+                        PlacementPreviewScreen(onReturnToAr = { preview = false },
+                            portalLab = portalLab, onTogglePortal = { portalLab = !portalLab })
+                    } else {
+                        CameraPermissionGate(onOpenPreview = { preview = true },
+                            onOpenPortal = { portalLab = true; preview = true }) {
+                            ArPlacementScreen(onOpenPreview = { preview = true },
+                                portalLab = portalLab, onTogglePortal = { portalLab = !portalLab })
+                        }
                     }
                 }
             }

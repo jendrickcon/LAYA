@@ -13,6 +13,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.Slider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -30,14 +31,26 @@ import io.github.sceneview.rememberCameraNode
 import io.github.sceneview.rememberEngine
 import io.github.sceneview.rememberOnGestureListener
 import io.github.sceneview.rememberView
+import io.github.sceneview.rememberRenderer
+import com.laya.desk.portal.PortalContent
+import com.laya.desk.portal.PortalController
+import com.laya.desk.portal.PortalProjection
 
 /** Development fallback. No AR session is created and no real-world anchoring is claimed. */
 @Composable
-fun PlacementPreviewScreen(onReturnToAr: () -> Unit) {
+fun PlacementPreviewScreen(
+    onReturnToAr: () -> Unit,
+    portalLab: Boolean = false,
+    onTogglePortal: () -> Unit = {},
+) {
     var placed by remember { mutableStateOf(false) }
     val game = rememberBalanceBridgeGame(canPlay = placed)
     val engine = rememberEngine()
     val view = rememberView(engine)
+    val renderer = rememberRenderer(engine)
+    val portal = remember { PortalController() }
+    var portalX by remember { mutableStateOf(0f) }
+    var portalY by remember { mutableStateOf(0.09f) }
     val touch = remember(game, view) { ExperienceTouchController(game, view) }
     val home = remember { Position(0.22f, 0.53f, 1.20f) }
     val target = remember { Position(0f, 0.30f, 0f) }
@@ -45,17 +58,19 @@ fun PlacementPreviewScreen(onReturnToAr: () -> Unit) {
         position = home
         lookAt(target)
     }
-    val manipulator = rememberCameraManipulator(orbitHomePosition = home, targetPosition = target)
+    val manipulator = if (portalLab) null else
+        rememberCameraManipulator(orbitHomePosition = home, targetPosition = target)
     BackHandler(onBack = onReturnToAr)
 
     Surface(Modifier.fillMaxSize()) {
         Column(Modifier.fillMaxSize().safeDrawingPadding()) {
             Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 12.dp),
                 verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text("LAYA", style = MaterialTheme.typography.headlineSmall)
+                Text(if (portalLab) "Portal lab · Experimental" else "LAYA", style = MaterialTheme.typography.headlineSmall)
                 Text("3D preview · No camera", style = MaterialTheme.typography.labelLarge)
                 Text(
-                    if (placed) "Drag empty space to look around; pinch to zoom."
+                    if (portalLab) "Look through the window. Near and far objects should shift differently."
+                    else if (placed) "Drag empty space to look around; pinch to zoom."
                     else "Tap the scene or use Place experience to begin.",
                     style = MaterialTheme.typography.bodyMedium,
                 )
@@ -64,11 +79,19 @@ fun PlacementPreviewScreen(onReturnToAr: () -> Unit) {
                 modifier = Modifier.weight(1f).fillMaxWidth(),
                 engine = engine,
                 view = view,
-                onTouchEvent = touch::onTouch,
+                renderer = renderer,
+                onTouchEvent = if (portalLab) null else touch::onTouch,
                 cameraNode = cameraNode,
                 cameraManipulator = manipulator,
                 autoCenterContent = false,
                 isOpaque = false,
+                onFrame = {
+                    if (portalLab) {
+                        cameraNode.position = Position(portalX, PortalProjection.CENTER_HEIGHT + portalY, 0.65f)
+                        cameraNode.lookAt(Position(0f, PortalProjection.CENTER_HEIGHT, 0f))
+                        if (placed) portal.render(cameraNode.worldPosition)
+                    }
+                },
                 onGestureListener = rememberOnGestureListener(
                     onSingleTapConfirmed = { _, _ ->
                         if (!placed) {
@@ -79,14 +102,15 @@ fun PlacementPreviewScreen(onReturnToAr: () -> Unit) {
                 ),
             ) {
                 if (placed) {
-                    BalanceBridgeScene(game)
+                    if (portalLab) PortalContent(portal, renderer) else BalanceBridgeScene(game)
                 } else {
                     val screenMaterial = remember(materialLoader) {
                         materialLoader.createColorInstance(Color(0xFF82B9B5), roughness = 0.9f)
                     }
                     CubeNode(
-                        size = Size(0.54f, 0.28f, 0.012f),
-                        center = Position(0f, 0.455f, 0.010f),
+                        size = if (portalLab) Size(0.30f, 0.20f, 0.004f) else Size(0.54f, 0.28f, 0.012f),
+                        center = if (portalLab) Position(0f, PortalProjection.CENTER_HEIGHT, 0f)
+                            else Position(0f, 0.455f, 0.010f),
                         materialInstance = screenMaterial,
                     )
                 }
@@ -98,7 +122,14 @@ fun PlacementPreviewScreen(onReturnToAr: () -> Unit) {
                 verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
                 if (placed) {
-                    BalanceBridgePanel(game, canPlay = true)
+                    if (portalLab) {
+                        Text(portal.status.message, style = MaterialTheme.typography.bodySmall)
+                        portal.error?.let { Text(it.take(160), style = MaterialTheme.typography.bodySmall) }
+                        Text("Viewpoint · left / right", style = MaterialTheme.typography.labelMedium)
+                        Slider(value = portalX, onValueChange = { portalX = it }, valueRange = -0.32f..0.32f)
+                        Text("Viewpoint · below / above", style = MaterialTheme.typography.labelMedium)
+                        Slider(value = portalY, onValueChange = { portalY = it }, valueRange = -0.12f..0.25f)
+                    } else BalanceBridgePanel(game, canPlay = true)
                     TextButton(onClick = {
                         placed = false
                         game.reset()
@@ -107,9 +138,12 @@ fun PlacementPreviewScreen(onReturnToAr: () -> Unit) {
                     Button(onClick = {
                         game.reset()
                         placed = true
-                    }, modifier = Modifier.fillMaxWidth()) { Text("Place experience") }
+                    }, modifier = Modifier.fillMaxWidth()) { Text(if (portalLab) "Place portal" else "Place experience") }
                 }
                 OutlinedButton(onClick = onReturnToAr, modifier = Modifier.fillMaxWidth()) { Text("Back to AR") }
+                TextButton(onClick = onTogglePortal) {
+                    Text(if (portalLab) "Return to LAYA" else "Portal lab (experimental)")
+                }
             }
         }
     }

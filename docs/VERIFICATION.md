@@ -2,6 +2,59 @@
 
 Rule: only record what was actually run. Leave "not run" until it is.
 
+## Milestone 5 portal experiment — 2026-10-11
+
+Delivered on `portal-rnd`: **0.5.0-portal-poc / versionCode 6**.
+Base main checkpoint: `aa03206`. Local checkpoint: `m5-portal-poc`.
+
+| Check | Result |
+|---|---|
+| Matching rendering API/source inspection | SceneView 4.23.0, Filament 1.72.1, ARCore 1.54.0; see PORTAL-RESEARCH.md |
+| Initial assembly | Failed on View's inaccessible Kotlin shadowing getter and a placement enum name; fixed with public setShadowingEnabled and READY_TO_PLACE |
+| Portal APK assembly | Passed in 32s, 36 tasks, 12 executed / 24 up-to-date |
+| Final assembly after entity ownership/status refinement | Passed in 6s, 36 tasks, 4 executed / 32 up-to-date |
+| AAPT2 APK inspection | com.laya.desk, code 6 / 0.5.0-portal-poc, minSdk 24 / targetSdk 36; CAMERA and internal AndroidX receiver permission; no INTERNET or VIBRATE |
+| Emulator, automated tests, lint | Not run, explicitly skipped at the user's request |
+| Preview observation / installation / phone run | Not performed |
+| Parallax / containment / orientation / frame rate / lifecycle acceptance | Pending phone verification |
+
+Only the `:app:assembleDebug` Gradle task was invoked, with the one-worker/in-process Kotlin
+command documented in README. No dependency changes, JVM target change, or new permissions.
+The prior M2 automated results and supplied M4 screenshots do not verify M5.
+
+APK: `app/build/outputs/apk/debug/app-debug.apk`.
+Final APK size: **45,597,726 bytes**. SHA-256:
+`0E835570CE04D6A95E1F4E7BA3F3E3B1EDBF48656F8811D36916492861BA9405`.
+This M5 APK is local; it has not been uploaded to a GitHub release.
+An identical, hash-checked delivery copy is saved at
+`C:\Users\DOT36\Downloads\LAYA-0.5.0-portal-poc-debug.apk`.
+
+Source review covered private scene isolation, fresh portal-local eye conversion, aperture-aligned
+projection, front/distance/angle guards, pre-beginFrame submission, no competing graphics loop,
+tracking gating, composition disposal, partial-construction ownership, explicit entity cleanup,
+and deferred textures. M4 game/puzzle/scene/input source files remain unchanged; the hosts add
+conditional lab content and navigation. These are source observations, not runtime results.
+
+### Short manual phone checklist — all pending
+
+1. **Preview:** 3D preview → Portal lab → Place portal. Floor below sky; gold post left,
+   blue arch farther right, small fairy. Move both viewpoint sliders; look for different
+   near/far parallax and changing overlap, with everything contained inside the window.
+2. **AR:** Back to AR → place using a detected book/floor/surface or labeled approximate Quick
+   placement. Keep the full aperture visible around 40–80 cm from its front.
+3. **Perspective:** physically translate the phone left/right 10–20 cm and modestly up/down.
+   The screen stays anchored; interior perspective/overlap changes with depth. Do not judge
+   positional parallax from camera rotation alone. No interior geometry may leak outside.
+4. **Recovery:** approach the back/edge/close limit and return, lose/restore tracking, background/
+   resume, then reset/re-place several times. Check for stale/black images, crashes, and growing
+   stutter. Report subjective smoothness separately from measured fps.
+5. **M4 fallback:** Return to LAYA; check garden controls, touch escape, and Balance Bridge in
+   preview and AR. Mode switches intentionally reset placement/progress.
+
+The experiment has no new gameplay or hand interaction. Runtime UV/clear/depth behavior, driver
+compatibility, and sustained memory/thermal performance remain unknown. API support plus successful
+assembly is the current verdict. See [PORTAL-RESEARCH.md](PORTAL-RESEARCH.md) for ranked approaches.
+
 ## Milestone 4 — 2026-10-11
 
 Delivered version: **0.4.0-m4 / versionCode 5**.

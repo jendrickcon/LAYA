@@ -18,14 +18,36 @@ The uploaded `LAYA-0.4.0-m4-debug.apk` is 45,555,928 bytes. GitHub's asset check
 SHA-256: `5AB93D7C2D2E231613DCDC160C84EB949175E82DD6DC68EBFD51EECC78EED32F`.
 
 ## Status
-Milestone 4 adds a playable garden, a continuous screen-to-board reveal, and an original geometric
-fairy in the shared preview/AR experience. Version **0.4.0-m4 (versionCode 5)** assembles successfully.
-No emulator, automated tests, lint, or phone run was performed for M4, as requested.
-The user-reported phone success and 20 passing tests belong to the previous M2 build.
-See `docs/STATUS.md` and `docs/VERIFICATION.md` for the actual checks.
+This experimental branch, **portal-rnd**, adds **M5 / 0.5.0-portal-poc (versionCode 6)**.
+The debug APK builds successfully. M4's garden, touch escape, and Balance Bridge remain the default
+experience; a separate **Portal lab (experimental)** entry opens the new rendering study.
+The download links above still point to the published **M4 baseline**. M5 has not been published.
+Build M5 locally to get `app/build/outputs/apk/debug/app-debug.apk`.
 
-`docs/ASTRA-M4-PLAYABLE-SCREEN.md` records this milestone's scope. Camera-based real-hand tracking stays
-later; all current dragging uses a finger touching the phone screen.
+M5 implements a contained 3D world rendered into a floating window, with an asymmetric camera
+projection driven by viewer position. It has a static fairy, near/far markers, and preview viewpoint
+sliders. It has **not been observed in preview or AR on the phone**. Emulator, automated tests,
+and lint were skipped as requested. See [portal findings](docs/PORTAL-RESEARCH.md),
+[status](docs/STATUS.md), and [verification / phone checklist](docs/VERIFICATION.md).
+
+M4 phone screenshots supplied by the user show the garden and Balance Bridge; they do not verify
+every transition. Earlier general phone-success reports and 20 passing tests belong to M2.
+Camera-based hand tracking stays later; current M4 dragging uses a finger touching the phone screen.
+
+## Try the experimental portal
+
+1. Open **3D preview**, choose **Portal lab (experimental)**, then **Place portal**.
+   Use the left/right and below/above sliders to change the viewing position.
+2. **Back to AR** keeps the lab selected. Place on a detected surface or use labeled
+   approximate Quick placement; start around 40–80 cm from the window.
+3. Move the phone sideways and moderately above/below. The gold near post and blue farther arch
+   should show different parallax and changing overlap, always inside the rectangle.
+4. **Reset placement** removes the experiment. **Return to LAYA** restores the normal M4 route.
+   Switching modes discards placement/progress.
+
+The portal is a front-facing rendering prototype with a static world. It does not yet add gameplay,
+hand interaction, or a new breakout. Back/very close/steep views hide the interior and show a hint.
+Frame rate, target orientation, lifecycle recovery, and the AR illusion need phone verification.
 
 ## Play the garden, breakout, and Balance Bridge
 1. Choose **3D preview (no camera)**, then **Place experience** (or tap the scene).
@@ -54,7 +76,7 @@ garden movement, escape, and crossing and cancels active drags. Mode switches di
 and game progress. The first fairy art pass uses cream petals, an olive bodice, warm brown skin,
 dark hair, pale leaf-shaped wings, and a flower headpiece.
 
-The floating game is a shallow, bounded 2.5D scene against an unlit backdrop. It does not use a
+The normal M4 floating game is a shallow, bounded 2.5D scene against an unlit backdrop. It does not use a
 render-to-texture viewport or portal clipping; side views can reveal its shallow depth. Its
 appearance, touch feel, and performance still need feedback from the target phone.
 
@@ -75,8 +97,9 @@ $env:JAVA_HOME = 'C:\Users\DOT36\jendrick\Android Studio\jbr'
 
 The verified build used Android Studio's JBR 25 and installed Android SDK Platform 36.
 The generated debug APK is `app/build/outputs/apk/debug/app-debug.apk`.
-Private repository: [jendrickcon/LAYA](https://github.com/jendrickcon/LAYA), branch `main`.
-The source checkpoints are tagged `m3-touch-interaction` and `m4-playable-screen`. APKs, build caches,
+Private repository: [jendrickcon/LAYA](https://github.com/jendrickcon/LAYA); M5 work is isolated on
+`portal-rnd`, with `main` preserved. The M5 local checkpoint is `m5-portal-poc`; previous checkpoints
+are `m3-touch-interaction` and `m4-playable-screen`. APKs, build caches,
 local SDK paths, and signing files are excluded from Git.
 
 ## Run on a device
@@ -118,6 +141,7 @@ No remote assets are loaded. Offline AR behavior still needs an on-device check.
 | Kotlin / Compose compiler plugin | 2.4.0 |
 | Compose BOM | 2026.02.01 |
 | SceneView `arsceneview` (brings ARCore) | 4.23.0 |
+| Resolved Filament / ARCore (transitive, unchanged) | 1.72.1 / 1.54.0 |
 | compileSdk / targetSdk / minSdk | 36 / 36 / 24 |
 
 ## Assets and attribution
