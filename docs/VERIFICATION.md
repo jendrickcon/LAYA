@@ -33,6 +33,12 @@ Published artifact name: `LAYA-0.4.0-m4-debug.apk`, linked from README through t
 SHA-256: `5AB93D7C2D2E231613DCDC160C84EB949175E82DD6DC68EBFD51EECC78EED32F`.
 The earlier hash remains the record of the agent's assembled APK. Runtime acceptance is still pending.
 
+Publication completed: the `m4-playable-screen` tag and branch were pushed, and the user merged
+PR #1 into main. The merged PR's title and description were updated. GitHub's release API reports
+the APK asset as `uploaded`, size 45,555,928 bytes, with digest
+`sha256:5ab93d7c2d2e231613dcdc160c84eb949175e82dd6dc68ebfd51eecc78eed32f`.
+The returned download URL matches README. Private-repository authentication remains required.
+
 Implementation/source review coverage (not runtime tests):
 - New pure Kotlin `game/GardenState.kt`: bounded left/right movement, branch jump, bud, exit,
   animated Skip intro, and capped frame deltas. Normal route: Right x3, Jump, Right x3.

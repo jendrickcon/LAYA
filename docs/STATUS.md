@@ -197,6 +197,8 @@ real-hand-tracking prototype. The full competition MVP is not yet verified.
 Local source checkpoints (outside the repository) preserve M2 before editing and Stage A after
 its successful assembly under C:\Users\DOT36\jendrick\PROJECTS\tmp\laya-review\m3-checkpoints.
 The local Git author identity reuses the existing Audiary identity, configured for LAYA only.
-The m3-touch-interaction tag preserves the pushed M3 source checkpoint. The m4-playable-screen
-tag preserves the M4 implementation. Publication is authorized for the m4-playable-screen branch,
-a comparison against main, and a GitHub prerelease containing the debug APK linked from README.
+The m3-touch-interaction tag preserves M3; m4-playable-screen preserves the M4 implementation.
+The user merged PR #1 into main. Its title and description are completed, and the M4 prerelease
+now contains LAYA-0.4.0-m4-debug.apk. GitHub reports the uploaded asset's expected size and SHA-256.
+README links to the release and direct download; access requires this private repository's permissions.
+No new app build or runtime checks were performed for the publication patch.
