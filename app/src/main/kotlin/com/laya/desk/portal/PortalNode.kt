@@ -14,6 +14,7 @@ import com.google.android.filament.TextureSampler
 import com.google.android.filament.View
 import com.google.android.filament.Viewport
 import io.github.sceneview.EngineDestroyQueue
+import io.github.sceneview.geometries.UvCoordinate
 import io.github.sceneview.loaders.MaterialLoader
 import io.github.sceneview.math.Direction
 import io.github.sceneview.math.Position
@@ -96,6 +97,12 @@ class PortalNode(
             normal = Direction(0f, 0f, 1f), materialInstance = image).apply {
             isVisible = false // Never sample an uninitialised render target.
             isTouchable = false
+            // The phone's offscreen image is vertically inverted with the stock plane UVs.
+            // Flip only texture V once; keep positions, winding, camera and parallax unchanged.
+            updateGeometry(vertices = geometry.vertices.map { vertex ->
+                val uv = requireNotNull(vertex.uvCoordinate)
+                vertex.copy(uvCoordinate = UvCoordinate(uv.x, 1f - uv.y))
+            })
             this@PortalNode.addChildNode(this)
         }
         val rim = color(0xFF34464B)

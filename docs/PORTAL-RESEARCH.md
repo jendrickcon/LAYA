@@ -11,6 +11,11 @@ orientation, parallax, recovery, and performance on the Redmi Note 9 Pro remain 
 No preview was observed, no phone was installed/run, and no emulator, automated tests, or lint ran.
 This is an assembled experiment, not a device acceptance claim.
 
+**Phone follow-up:** the user subsequently reports working parallax in 0.5.0. The supplied screenshot
+shows the rendered interior upside down. Version 0.5.1 corrects only the display's vertical texture
+mapping (v = 1 - v); projection and scene coordinates stay intact. The new APK assembles;
+upright appearance and vertical parallax await the user's phone recheck. Lag is outside this patch.
+
 ## Practical approaches, easiest to hardest in this repository
 
 | Rank | Approach | Required path / effort | Fidelity and likely cost | Decision |
@@ -61,8 +66,9 @@ Primary matching sources:
   ARSceneView camera update/callback: approximately 1535 / 1647.
 - SceneView's AAR contains `assets/materials/image_texture.filamat`. Its matching shader is
   unlit, samples UV0, uses premultiplied transparent blending, and disables culling.
-  The interior skybox has opaque alpha. Plane UVs map bottom-left to (0,0); runtime orientation
-  and color remain phone checklist items.
+  The interior skybox has opaque alpha. Stock plane UVs map bottom-left to (0,0); the phone image
+  showed vertical inversion, so 0.5.1 remaps V to 1 - V through GeometryNode.updateGeometry(vertices).
+  Only UVs change, once at construction; corrected orientation and color remain phone checklist items.
 
 ## Geometry and projection
 

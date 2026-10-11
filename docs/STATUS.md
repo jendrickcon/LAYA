@@ -2,7 +2,20 @@
 
 Last updated: 2026-10-11
 
-## Current experiment: M5 portal PoC
+## M5 orientation patch — 0.5.1-portal-poc
+
+- The user reports working parallax on the Redmi Note 9 Pro. The supplied screenshot shows
+  the initial portal image vertically inverted. This is phone feedback for 0.5.0, not a full
+  acceptance pass; lag investigation is outside this patch at the user's request.
+- Flip only the display plane's texture V coordinate: `v = 1 - v`, once during construction.
+  World positions, camera/frustum math, geometry winding, rendering cadence, and lifecycle remain
+  unchanged. The same correction serves AR and preview; M4 rendering is unaffected.
+- Version **0.5.1-portal-poc / versionCode 7** assembles in **12s**. APK metadata confirms
+  the new version and unchanged permissions. No emulator, automated tests, or lint.
+  Corrected upright orientation and vertical parallax still need phone confirmation.
+- Checkpoint: `m5-portal-orientation`. The original m5-portal-poc tag/asset remain available.
+
+## M5 portal PoC baseline
 
 - Branch `portal-rnd` starts at main `aa03206`. Main, M4's tag, and its published APK remain intact.
   Version **0.5.0-portal-poc / versionCode 6** adds a Portal lab entry; normal M4 remains the default.

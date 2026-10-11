@@ -11,8 +11,8 @@ android {
         applicationId = "com.laya.desk"
         minSdk = 24 // SceneView 4.23.0 minimum. Target phone (Redmi Note 9 Pro) runs Android 10 (API 29).
         targetSdk = 36
-        versionCode = 6
-        versionName = "0.5.0-portal-poc"
+        versionCode = 7
+        versionName = "0.5.1-portal-poc"
     }
 
     buildTypes {

@@ -2,6 +2,30 @@
 
 Rule: only record what was actually run. Leave "not run" until it is.
 
+## M5 orientation patch — 2026-10-11
+
+Version **0.5.1-portal-poc / versionCode 7**, on portal-rnd; checkpoint `m5-portal-orientation`.
+
+- Phone evidence for the initial 0.5.0 build: the user reports that parallax works. The supplied
+  Screenshot_2026-10-11-12-56-20-275_com.laya.desk.jpg shows the interior vertically inverted.
+  The agent inspected the screenshot and source; no independent device run or video analysis.
+- Fix: replace each display-plane UV (u, v) with (u, 1 - v) once during resource creation.
+  Uses the verified SceneView 4.23.0 GeometryNode.updateGeometry(vertices) API. No camera,
+  projection, world placement, rendering cadence, dependency, permission, or M4 gameplay changes.
+- `:app:assembleDebug` passed in **12s**; 36 tasks, 10 executed / 26 up-to-date.
+  AAPT2 confirms com.laya.desk, code 7 / 0.5.1-portal-poc, minSdk 24 / targetSdk 36,
+  CAMERA and AndroidX internal receiver permission; no INTERNET or VIBRATE.
+- Emulator, automated tests, and lint skipped per the user's continuing instruction.
+  No performance diagnosis was attempted. The user's explanation of lag was not independently measured.
+
+APK: `app/build/outputs/apk/debug/app-debug.apk`, **45,580,246 bytes**.
+SHA-256: `15219E57CCC20AAFF75BFDDF746EEDB79705D86A5D4391B57E65F19A90A27699`.
+Named delivery copy: `C:\Users\DOT36\Downloads\LAYA-0.5.1-portal-poc-debug.apk`.
+
+Phone recheck: floor below sky, fairy upright; move sideways and above/below in preview and AR.
+Parallax should remain depth-dependent in both axes. Reset once and return to M4.
+Corrected orientation and broader recovery/performance acceptance remain pending.
+
 ## Milestone 5 portal experiment — 2026-10-11
 
 Delivered on `portal-rnd`: **0.5.0-portal-poc / versionCode 6**.
